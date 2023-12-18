@@ -51,33 +51,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         pickerView.dataSource = self
         
         
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-//            let controller = UIAlertController(title: "Ошибка", message: "", preferredStyle: .alert)
-//            controller.addAction(UIAlertAction(title: "Ok", style: .default, handler: { _ in
-////                self.text = textField.text
-//                self.text = controller.textFields?.first?.text
-//            }))
-//            controller.addTextField { textField in
-//                textField.placeholder = "Напишите свой отзыв!"
-//                textField.addTarget(self, action: #selector(self.getText), for: .valueChanged)
-//                textField.delegate = self
-//            }
-//            controller.addAction(UIAlertAction(title: "Отмена", style: .cancel, handler: { _ in
-//
-//            }))
-//            controller.addAction(UIAlertAction(title: "Удалить", style: .destructive, handler: { _ in
-//
-//            }))
-//            self.present(controller, animated: true)
-//        }
-        
-//        NotificationCenter.default.addObserver(forName: UITextField.textDidChangeNotification, object: nil, queue: .main) { notification in
-//            self.text = (notification.object as? UITextField)?.text
-//        }
-        
-        // Do any additional setup after loading the view.
-        
-        
+
         
     }
     
