@@ -8,11 +8,7 @@
 import UIKit
 import PhotosUI
 
-class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, PHPickerViewControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate {
-    
-    
-    
-    var text: String!
+
 
     @IBOutlet weak var imageView: UIImageView!
     
@@ -46,11 +42,9 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
         
-        pickerView.delegate = self
-        pickerView.dataSource = self
-        
-        
+
 
         
     }
@@ -115,5 +109,4 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     }
     
 }
-
 
