@@ -6,66 +6,107 @@
 //
 
 import UIKit
+import PhotosUI
 
-struct ToDo: Codable {
-    let id: Int
-    let userId: Int
-    let title: String
-    let completed: Bool
-    
-    enum CodingKeys: CodingKey {
-        case id
-        case userId
-        case title
-        case completed
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(self.id, forKey: .id)
-        try container.encode(self.userId, forKey: .userId)
-        try container.encode(self.title, forKey: .title)
-        try container.encode(self.completed, forKey: .completed)
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.id = try container.decode(Int.self, forKey: .id)
-        self.userId = try container.decode(Int.self, forKey: .userId)
-        self.title = try container.decode(String.self, forKey: .title)
-        self.completed = try container.decode(Bool.self, forKey: .completed)
-    }
-}
 
-class ViewController: UIViewController {
 
+    @IBOutlet weak var imageView: UIImageView!
+    
+    @IBOutlet weak var datePicker: UIDatePicker!
+    
+    @IBOutlet weak var pickerView: UIPickerView!
+    
+    lazy var pHpicker: PHPickerViewController = {
+        var configuration = PHPickerConfiguration(photoLibrary: .shared())
+        configuration.selectionLimit = 3
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = self
+        return picker
+    }()
+    
+    lazy var picker: UIImagePickerController = {
+        let picker = UIImagePickerController()
+        picker.delegate = self
+        picker.allowsEditing = true
+        if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
+            picker.sourceType = .photoLibrary
+        } else if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
+            picker.sourceType = .savedPhotosAlbum
+        } else if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            picker.sourceType = .camera
+        } else {
+            fatalError("Нет ни одного типа источника картинок")
+        }
+        return picker
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        let url = URL(string: "https://jsonplaceholder.typicode.com/todos/1")!
-        let urlRequest = URLRequest(url: url)
-        URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-            
-            let todo = try! JSONDecoder().decode(ToDo.self, from: data!)
-            let data = try! JSONEncoder().encode(todo)
-            
-            
-            let dict = try! JSONSerialization.jsonObject(with: data) as! [String: Any]
-//            let todo = ToDo(id: dict["id"] as! Int,
-//                            title: dict["title"] as! String,
-//                            completed: dict["completed"] as! Int)
-//            let completed = dict["completed"] as! Int
-//            let id = dict["id"] as! Int
-//            let title = dict["title"] as! String
-//            let userId = dict["userId"] as? Int ?? dict["user_id"] as? Int
-            
-            print(todo)
-            print(dict)
-//            print(data)
-//            print(response)
-//            print(error)
-        }.resume()
-        // Do any additional setup after loading the view.
+
+        
+
+
+        
+    }
+    
+    @objc func getText(_ sender: UITextField) {
+        
+    }
+    
+    @IBAction func buttonTapped(_ sender: UIButton) {
+//        present(picker, animated: true)
+        present(pHpicker, animated: true)
+    }
+    
+    // MARK: - UIImagePickerControllerDelegate
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        let image = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage
+        imageView.image = image
+//        PNG/.png, JPEG/.jpeg/.jpg
+//        let imagePNG = image?.pngData()
+//        let imageJPEG = image?.jpegData(compressionQuality: 1.0)
+//        try! imagePNG?.write(to: <#T##URL#>)
+        
+        picker.dismiss(animated: true)
+//       print(info)
     }
 
-
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true)
+    }
+    
+    // MARK: - PHPickerViewControllerDelegate
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        print(results)
+        let itemProviders = results.map{ $0.itemProvider }
+        for item in itemProviders {
+            item.loadObject(ofClass: UIImage.self) { image, error in
+                let image = image as? UIImage
+                DispatchQueue.main.async {
+                    self.imageView.image = image
+                }
+            }
+        }
+        picker.dismiss(animated: true)
+        
+    }
+    
+    // MARK: - UIPickerViewDataSource
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 2
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        if component == 0 {
+            5
+        } else {
+            10
+        }
+    }
+    // MARK: - UIPickerViewDelegate
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return "\(component) - \(row)"
+    }
+    
 }
+
